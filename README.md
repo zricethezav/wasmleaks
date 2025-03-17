@@ -1,0 +1,2 @@
+# wasmleaks
+gitleaks wasm browser
