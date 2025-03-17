@@ -1,4 +1,4 @@
-# [WASMLeaks](gitleaks.io/playground)
+# WASMLeaks
 A website to check for things that look like secrets. Submit bugs here.
 
 ## Building
