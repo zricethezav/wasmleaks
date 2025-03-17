@@ -1,0 +1,1414 @@
+/* Base styles and reset */
+:root {
+  --primary-color: #2563eb;
+  --primary-dark: #1d4ed8;
+  --primary-light: #3b82f6;
+  --secondary-color: #f3f4f6;
+  --surface-color: #ffffff;
+  --border-color: #e5e7eb;
+  --text-color: #374151;
+  --text-light: #6b7280;
+  --text-inverse: #ffffff;
+  --error-color: #ef4444;
+  --warning-color: #f59e0b;
+  --success-color: #10b981;
+  --highlight-color: rgba(255, 255, 0, 0.2);
+  --highlight-secret: rgba(239, 68, 68, 0.2);
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --radius: 0;
+  /* Changed from 6px to 0 for angular look */
+  --header-height: 60px;
+  --metadata-height: 50px;
+  --footer-height: 40px;
+  --resize-handle-height: 8px;
+  --min-editor-height: 100px;
+  --default-editor-height: 300px;
+  --font-mono: 'Fira Code', 'IBM Plex Mono', 'Source Code Pro', monospace;
+  --font-main: 'IBM Plex Sans', 'Roboto Mono', monospace;
+}
+
+/* Dark mode variables */
+body.dark-mode {
+  --primary-color: #1e40af;
+  --primary-dark: #1e3a8a;
+  --primary-light: #3b82f6;
+  --secondary-color: #1f2937;
+  --surface-color: #111827;
+  --border-color: #374151;
+  --text-color: #f3f4f6;
+  --text-light: #9ca3af;
+  --text-inverse: #111827;
+  --highlight-color: rgba(255, 255, 0, 0.3);
+  /* Increased brightness for dark mode */
+  --highlight-secret: rgba(255, 99, 99, 0.3);
+  /* Brighter and more red for dark mode */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  font-family: var(--font-main);
+  /* Updated from default system fonts */
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text-color);
+  background-color: var(--surface-color);
+}
+
+/* App Container */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* Header */
+.app-header {
+  height: var(--header-height);
+  background-color: var(--primary-color);
+  color: var(--text-inverse);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  flex-shrink: 0;
+  box-shadow: var(--shadow);
+  z-index: 10;
+}
+
+/* Dark mode header */
+body.dark-mode .app-header {
+  background-color: #0f172a;
+  /* Very dark blue */
+  color: #fff;
+}
+
+/* Logo link styling */
+.logo-link {
+  text-decoration: none;
+  color: var(--text-inverse);
+}
+
+.logo-link:hover {
+  opacity: 0.9;
+}
+
+.logo h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.exponent {
+  font-size: 0.6em;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Main area */
+.app-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Tabs */
+.tabs-container {
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--surface-color);
+  flex-shrink: 0;
+}
+
+.tabs {
+  display: flex;
+  padding: 0 1rem;
+}
+
+.tab-btn {
+  padding: 0.75rem 1.25rem;
+  background: none;
+  border: none;
+  color: var(--text-light);
+  font-weight: 500;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+  color: var(--primary-color);
+}
+
+.tab-btn.active {
+  color: var(--primary-color);
+  border-bottom-color: var(--primary-color);
+}
+
+/* Dark mode tabs */
+body.dark-mode .tab-btn.active {
+  color: #60a5fa;
+  /* Light blue for better visibility */
+  border-bottom-color: #60a5fa;
+}
+
+body.dark-mode .tab-btn:hover {
+  color: #60a5fa;
+}
+
+/* Metadata bar */
+.metadata-bar {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  gap: 1rem;
+  height: var(--metadata-height);
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Mobile metadata optimizations */
+@media (max-width: 768px) {
+  .metadata-bar {
+    padding: 0.3rem 0.5rem;
+    height: auto;
+    min-height: 30px;
+    max-height: 40px;
+    gap: 0.25rem;
+  }
+
+  .app-main {
+    height: calc(100vh - var(--header-height) - 40px - var(--footer-height));
+  }
+}
+
+.version-label {
+  display: inline-block;
+  background-color: var(--primary-color);
+  color: var(--text-inverse);
+  font-size: 0.75rem;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0;
+  /* Changed from 4px */
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.entropy-calc {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.entropy-calc input {
+  flex: 1;
+  max-width: 350px;
+  padding: 0.375rem 0.75rem;
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  color: var(--text-color);
+  font-size: 0.875rem;
+  font-family: var(--font-mono);
+  /* Added for input fields */
+}
+
+#entropyOutput {
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  /* Added for monospaced output */
+}
+
+.entropy-warning {
+  color: var(--error-color);
+  font-size: 0.75rem;
+}
+
+/* Tab content */
+.tab-content-container {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.tab-content {
+  display: none;
+  height: 100%;
+  overflow: auto;
+  padding: 1rem;
+}
+
+.tab-content.active {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Editor container */
+.editor-container {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  overflow: hidden;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Editor toolbar */
+.editor-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  background-color: var(--secondary-color);
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.875rem;
+}
+
+/* Action bar */
+.action-bar {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 0;
+  gap: 0.5rem;
+}
+
+/* Log level select dropdown */
+#logLevelSelect {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  background-color: var(--surface-color);
+  color: var(--text-color);
+  min-width: 100px;
+  font-family: var(--font-main);
+  /* Added for consistent font */
+}
+
+body.dark-mode #logLevelSelect {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+  border-color: var(--border-color);
+}
+
+/* Mobile specific log level dropdown */
+@media (max-width: 768px) {
+  #logLevelSelect {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.75rem;
+    min-width: 80px;
+  }
+}
+
+/* Results container */
+.results-container {
+  margin-top: 1rem;
+  overflow: auto;
+  flex: 1;
+  min-height: 100px;
+}
+
+/* Resizable sections */
+.resizable-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.editor-section {
+  display: flex;
+  flex-direction: column;
+  height: var(--default-editor-height);
+  min-height: var(--min-editor-height);
+  overflow: hidden;
+}
+
+.resize-handle {
+  height: var(--resize-handle-height);
+  background-color: var(--secondary-color);
+  cursor: ns-resize;
+  position: relative;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.resize-handle::before {
+  content: "";
+  width: 30px;
+  height: 2px;
+  background-color: var(--border-color);
+  border-radius: 0;
+  /* Changed from 1px */
+}
+
+.resize-handle:hover {
+  background-color: var(--primary-light);
+}
+
+.resize-handle:hover::before {
+  background-color: var(--text-inverse);
+}
+
+.results-section {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Rule wizard */
+.wizard-form {
+  overflow: auto;
+  max-height: 100%;
+  padding: 1rem;
+}
+
+/* Form styling */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  background-color: var(--surface-color);
+  color: var(--text-color);
+  font-family: var(--font-main);
+  /* Added for consistent font */
+}
+
+.form-group textarea {
+  font-family: var(--font-mono);
+  /* Use monospace for textareas */
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+/* Dark mode form overrides */
+body.dark-mode .form-group input,
+body.dark-mode .form-group select,
+body.dark-mode .form-group textarea {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+  border-color: var(--border-color);
+}
+
+/* Generated rule output */
+.rule-output-container {
+  position: relative;
+}
+
+.rule-output-container textarea {
+  width: 100%;
+  height: 150px;
+  resize: vertical;
+  padding: 0.5rem;
+  font-family: var(--font-mono);
+  /* Changed to specified mono font */
+  font-size: 0.875rem;
+}
+
+.copy-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background-color: var(--secondary-color);
+  border: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 0.75rem;
+}
+
+/* Footer */
+.app-footer {
+  height: var(--footer-height);
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* border-top: 1px solid var(--border-color); */
+  font-size: 0.75rem;
+  color: var(--text-light);
+  flex-shrink: 0;
+}
+
+.app-footer a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.app-footer a:hover {
+  text-decoration: underline;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+  border: none;
+  font-family: var(--font-main);
+  /* Added for consistent font */
+}
+
+.btn-primary {
+  text-decoration: none;
+  background-color: var(--primary-color);
+  color: var(--text-inverse);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+}
+
+.btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+.btn-icon {
+  padding: 0.375rem;
+  background: none;
+  color: var(--text-inverse);
+}
+
+/* Dark mode button overrides */
+body.dark-mode .btn {
+  border: 1px solid var(--border-color);
+}
+
+body.dark-mode .btn-primary {
+  background-color: #0f172a;
+  /* Very dark blue to match header */
+  color: #fff;
+  border-color: #1e293b;
+  /* Slightly lighter border */
+}
+
+body.dark-mode .btn-primary:hover {
+  background-color: #1e293b;
+  /* Slightly lighter on hover */
+}
+
+body.dark-mode .btn-sm {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+}
+
+body.dark-mode .btn-sm:hover {
+  background-color: var(--primary-color);
+  color: var(--text-inverse);
+}
+
+.icon {
+  margin-right: 0.25rem;
+}
+
+/* Dropdown */
+.dropdown {
+  position: relative;
+}
+
+.dropdown-toggle::after {
+  content: '▼';
+  font-size: 0.5rem;
+  margin-left: 0.25rem;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  min-width: 10rem;
+  padding: 0.5rem 0;
+  margin-top: 0.25rem;
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  z-index: 100;
+}
+
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+.dropdown-menu a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+
+.dropdown-menu a:hover {
+  background-color: var(--secondary-color);
+}
+
+/* Dark mode header buttons and elements */
+body.dark-mode .header-button,
+body.dark-mode .header-actions .btn {
+  background-color: #1e293b;
+  /* Slightly lighter than the header */
+}
+
+body.dark-mode .header-button:hover,
+body.dark-mode .header-actions .btn:hover {
+  background-color: #334155;
+  /* Even lighter on hover */
+}
+
+/* CodeMirror customization */
+.CodeMirror {
+  height: 100% !important;
+  font-family: var(--font-mono) !important;
+  /* Changed to specified mono font */
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Dark mode CodeMirror adjustments */
+body.dark-mode .CodeMirror {
+  background-color: var(--surface-color);
+  color: #d4d4d4;
+}
+
+body.dark-mode .CodeMirror-gutters {
+  background-color: var(--secondary-color);
+  border-right: 1px solid var(--border-color);
+}
+
+body.dark-mode .CodeMirror-linenumber {
+  color: #858585;
+}
+
+/* CodeMirror Syntax Highlighting for Dark Mode */
+body.dark-mode .cm-s-idea span.cm-comment {
+  color: #6A9955;
+}
+
+body.dark-mode .cm-s-idea span.cm-string,
+body.dark-mode .cm-s-idea span.cm-string-2 {
+  color: #ce9178;
+}
+
+body.dark-mode .cm-s-idea span.cm-number {
+  color: #b5cea8;
+}
+
+body.dark-mode .cm-s-idea span.cm-property {
+  color: #9cdcfe;
+}
+
+body.dark-mode .cm-s-idea span.cm-atom {
+  color: #569cd6;
+}
+
+body.dark-mode .cm-s-idea span.cm-keyword {
+  color: #569cd6;
+}
+
+body.dark-mode .cm-s-idea span.cm-operator {
+  color: #d4d4d4;
+}
+
+body.dark-mode .cm-s-idea span.cm-variable {
+  color: #9cdcfe;
+}
+
+body.dark-mode .cm-s-idea span.cm-variable-2 {
+  color: #9cdcfe;
+}
+
+body.dark-mode .cm-s-idea span.cm-def {
+  color: #dcdcaa;
+}
+
+body.dark-mode .cm-s-idea span.cm-tag {
+  color: #569cd6;
+}
+
+body.dark-mode .cm-s-idea span.cm-bracket {
+  color: #d4d4d4;
+}
+
+body.dark-mode .cm-s-idea span.cm-link {
+  color: #569cd6;
+}
+
+/* Findings table */
+.findings-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  font-family: var(--font-main);
+  /* Added for consistent font */
+}
+
+.findings-table th {
+  background-color: var(--secondary-color);
+  padding: 0.75rem;
+  text-align: left;
+  font-weight: 500;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.findings-table th.asc::after {
+  content: ' ↑';
+}
+
+.findings-table th.desc::after {
+  content: ' ↓';
+}
+
+.findings-table td {
+  padding: 0.75rem;
+  border-top: 1px solid var(--border-color);
+  vertical-align: top;
+}
+
+.findings-table tr:hover td {
+  background-color: var(--secondary-color);
+}
+
+.findings-table pre {
+  font-family: var(--font-mono);
+  /* Changed to specified mono font */
+  font-size: 0.875rem;
+  background-color: var(--secondary-color);
+  padding: 0.5rem;
+  border-radius: var(--radius);
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* Results toolbar */
+.results-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  margin-bottom: 0.5rem;
+}
+
+/* Highlight colors for CodeMirror */
+.CodeMirror .highlight-yellow {
+  background-color: var(--highlight-color) !important;
+}
+
+.CodeMirror .highlight-red {
+  background-color: var(--highlight-secret) !important;
+}
+
+/* Enhanced dark mode highlights for CodeMirror */
+body.dark-mode .CodeMirror .highlight-yellow {
+  background-color: rgba(255, 255, 0, 0.3) !important;
+  color: #ffffff !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.7);
+}
+
+body.dark-mode .CodeMirror .highlight-red {
+  background-color: rgba(255, 99, 99, 0.3) !important;
+  color: #ffffff !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.7);
+}
+
+/* Error and status messages */
+.error {
+  color: var(--error-color);
+  padding: 1rem;
+  background-color: rgba(239, 68, 68, 0.1);
+  border-radius: var(--radius);
+  margin: 1rem 0;
+}
+
+.scan-stats {
+  font-size: 0.875rem;
+  margin: 1rem 0;
+  line-height: 1.5;
+}
+
+/* Loading spinner */
+.spinner {
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  /* Keeping this circular as it's a spinner */
+  border-top-color: var(--primary-color);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Table wrapper */
+.table-wrapper {
+  overflow-x: auto;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  .app-header {
+    justify-content: center;
+    flex-direction: column;
+    height: auto;
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .logo h1 {
+    font-size: 1.0rem;
+    font-weight: 600;
+  }
+
+  .tabs {
+    overflow-x: auto;
+    padding: 0;
+  }
+
+  .tab-btn {
+    padding: 0.5rem 0.75rem;
+    white-space: nowrap;
+  }
+
+  .metadata-bar {
+    flex-direction: column;
+    height: auto;
+    align-items: flex-start;
+  }
+
+  .entropy-calc {
+    width: 100%;
+  }
+
+  .action-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #logLevelSelect {
+    width: 100%;
+  }
+
+  /* Ensure the scan tab content shows the editor by default */
+  .app-main {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - var(--header-height) - var(--footer-height));
+    overflow: hidden;
+  }
+
+  .tab-content-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .tab-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .editor-container {
+    min-height: 40px;
+    /* Ensure minimum height for editor on mobile */
+    max-height: 300px;
+    /* Prevent editor from taking too much space */
+    overflow: auto;
+  }
+
+  .results-container {
+    overflow: auto;
+    flex: 1;
+  }
+
+  /* Fix table overflow on mobile */
+  .table-wrapper {
+    overflow-x: auto;
+    width: 100%;
+  }
+
+  /* Adjust button sizes on mobile for better touch targets */
+  .btn {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+  }
+
+  .btn-primary {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.5rem;
+  }
+
+  .btn-icon {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.5rem;
+  }
+
+  .entropy-warning {
+    display: none;
+  }
+
+  .entropy-calc {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    flex: 1;
+  }
+
+  .entropy-calc input {
+    flex: 1;
+    /* max-width: 350px; */
+    padding: 0.375rem 0.75rem;
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    color: var(--text-color);
+    font-size: 0.75rem;
+  }
+
+  #entropyOutput {
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .btn-sm {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+  }
+
+  /* Adjust resize handle for mobile */
+  .resize-handle {
+    height: 16px;
+    /* Larger touch target for mobile */
+  }
+}
+
+/* Small screen adjustments */
+@media (max-width: 480px) {
+  .header-actions {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .logo h1 {
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .tabs {
+    justify-content: space-between;
+  }
+
+  .tab-btn {
+    flex: 1;
+    text-align: center;
+    font-size: 0.8rem;
+    padding: 0.4rem 0.5rem;
+  }
+
+  /* Ensure CodeMirror editors display properly on mobile */
+  .CodeMirror {
+    height: 200px;
+    font-size: 11px;
+    /* Even smaller font on mobile */
+  }
+
+  .CodeMirror-linenumber {
+    font-size: 9px;
+    /* Smaller line numbers */
+    padding: 0 3px 0 3px;
+    /* Tighter padding */
+  }
+
+  /* Adjust findings table for mobile */
+  .findings-table th,
+  .findings-table td {
+    padding: 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .findings-table pre {
+    font-size: 0.75rem;
+    max-width: 150px;
+    overflow-x: auto;
+  }
+
+  /* Make sure we can see the code AND the results */
+  .tab-content#scan-tab {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: 100%;
+  }
+
+  /* Make action buttons more accessible */
+  .results-toolbar .btn {
+    padding: 0.4rem;
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Scan button smaller on mobile */
+  #scanBtn {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.75rem;
+  }
+
+  /* Compact metadata bar */
+  .metadata-bar {
+    padding: 0.3rem 0.5rem;
+  }
+}
+
+/* About page specific styles - add these to your styles.css file */
+
+.about-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem 1rem;
+  background-color: var(--surface-color);
+}
+
+.about-container {
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: var(--surface-color);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 2rem;
+}
+
+.about-container h1 {
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  text-align: center;
+}
+
+.about-section {
+  margin-bottom: 2rem;
+}
+
+.about-section h2 {
+  color: var(--text-color);
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.about-section p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.about-section ul,
+.about-section ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.about-section li {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.about-section a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.about-section a:hover {
+  text-decoration: underline;
+}
+
+/* Dark mode specific styles */
+body.dark-mode .logo-link {
+  color: white;
+}
+
+body.dark-mode .about-container {
+  background-color: var(--surface-color);
+}
+
+body.dark-mode .about-section h2 {
+  border-bottom-color: var(--border-color);
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  .about-content {
+    padding: 1rem 0.5rem;
+  }
+
+  .about-container {
+    padding: 1.5rem 1rem;
+  }
+
+  .about-container h1 {
+    font-size: 1.5rem;
+  }
+
+  .about-section h2 {
+    font-size: 1.2rem;
+  }
+}
+
+/* Share button styles */
+.share-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  cursor: pointer;
+}
+
+.share-btn .icon {
+  font-size: 1.2rem;
+}
+
+/* Modal dialog for share link */
+.share-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.share-modal-content {
+  background-color: var(--surface-color);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: var(--shadow);
+}
+
+.share-modal-content h3 {
+  margin-bottom: 0.75rem;
+  color: var(--text-color);
+}
+
+.share-modal input {
+  width: 100%;
+  padding: 0.75rem;
+  margin: 1rem 0;
+  font-family: var(--font-mono);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  background-color: var(--surface-color);
+  color: var(--text-color);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+/* Notification system */
+.notification {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  background-color: var(--primary-color);
+  color: var(--text-inverse);
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  z-index: 1000;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  max-width: 300px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.notification-error {
+  background-color: var(--error-color);
+}
+
+.notification-processing {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+
+.notification-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--primary-color);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+body.dark-mode .notification-processing {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+  border-color: var(--border-color);
+}
+
+body.dark-mode .notification-spinner {
+  border-color: var(--primary-light);
+  border-top-color: transparent;
+}
+
+/* Dark mode styles for share features */
+body.dark-mode .share-modal-content {
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+}
+
+body.dark-mode .share-modal input {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+  border-color: var(--border-color);
+}
+
+/* Mobile responsive styles for share features */
+@media (max-width: 768px) {
+  .notification {
+    max-width: 90%;
+    font-size: 0.875rem;
+    bottom: 0.5rem;
+    right: 0.5rem;
+  }
+
+  .share-modal-content {
+    width: 95%;
+    padding: 1rem;
+  }
+
+  .share-modal-content h3 {
+    font-size: 1.1rem;
+  }
+
+  .share-modal input {
+    padding: 0.5rem;
+    font-size: 0.75rem;
+  }
+}
+
+/* Loading overlay for initial page load when shared link is detected */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--surface-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top-color: var(--primary-color);
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+.loading-message {
+  font-size: 1.2rem;
+  color: var(--text-color);
+  text-align: center;
+  max-width: 80%;
+}
+
+/* Dark mode adjustments */
+body.dark-mode .loading-overlay {
+  background-color: var(--surface-color);
+}
+
+body.dark-mode .loading-spinner {
+  border-color: rgba(255, 255, 255, 0.1);
+  border-top-color: var(--primary-light);
+}
+
+body.dark-mode .loading-message {
+  color: var(--text-color);
+}
+
+/* Hide content during loading */
+.content-loading .app-main,
+.content-loading .tabs-container,
+.content-loading .editor-section {
+  visibility: hidden;
+}
+
+/* Enhancing cursor visibility in dark mode */
+body.dark-mode .CodeMirror-cursor {
+  border-left: 1px solid #ffffff !important;
+  /* White cursor */
+  width: 2px !important;
+  /* Slightly thicker */
+}
+
+/* Adding a subtle animation for better visibility */
+@keyframes cursor-blink-dark {
+  0% {
+    opacity: 1;
+  }
+
+
+  100% {
+    opacity: 1;
+  }
+}
+
+body.dark-mode .CodeMirror.cm-fat-cursor .CodeMirror-cursor,
+body.dark-mode .CodeMirror .CodeMirror-cursor {
+  animation: cursor-blink-dark 1.2s infinite;
+}
+
+/* Ensuring cursor is visible during selection */
+body.dark-mode .CodeMirror-focused .CodeMirror-selected {
+  background-color: rgba(66, 135, 255, 0.3) !important;
+  /* Blue selection */
+}
+
+
+.app-header .btn-icon:hover {
+  background-color: var(--primary-dark);
+}
+
+html.dark-mode-preload,
+html.dark-mode-preload body {
+  background-color: var(--surface-color);
+  color: var(--text-color);
+}
+
+html.dark-mode-preload .app-header {
+  background-color: #0f172a;
+  color: #fff;
+}
+
+html.dark-mode-preload .btn-primary {
+  background-color: #0f172a;
+  color: #fff;
+  border-color: #1e293b;
+}
+
+html.dark-mode-preload .btn-icon {
+  color: white;
+}
+
+/* Character counter styles */
+.char-counter {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: var(--secondary-color);
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  border-top-left-radius: var(--radius);
+  border: 1px solid var(--border-color);
+  border-right: none;
+  border-bottom: none;
+  color: var(--text-light);
+  font-family: var(--font-mono);
+  z-index: 5;
+  user-select: none;
+  transition: opacity 0.3s ease;
+  opacity: 0.8;
+}
+
+.char-counter:hover {
+  opacity: 1;
+}
+
+body.dark-mode .char-counter {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .char-counter {
+    padding: 1px 4px;
+    font-size: 0.7rem;
+  }
+}

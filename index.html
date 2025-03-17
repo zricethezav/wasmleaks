@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>WASMLeaks | WASM Gitleaks Playground</title>
+  <meta name="description" content="WASMLeaks is a free, browser-based tool powered by Gitleaks. 100% client-side with no server uploads." />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  
+  <!-- CodeMirror CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/idea.min.css" />
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="styles.css" />
+
+  <script>
+    // Immediately check for dark mode preference before page renders
+    (function() {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark-mode-preload');
+      }
+    })();
+  </script>
+
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo">
+        <a href="index.html" class="logo-link">
+          <h1>WASMLeaks</h1>
+        </a>
+      </div>
+      <div class="header-actions">
+        <!-- Add the new share button here, right before the sponsor button -->
+        <button id="share-btn" class="btn btn-primary">
+          <span class="icon"></span>
+          <span>Share</span>
+        </button>
+        <a class="btn btn-primary" href="https://github.com/sponsors/zricethezav" target="_blank">
+          <span class="icon">❤️</span>
+          <span>Sponsor</span>
+        </a>
+        <button id="toggle-theme-btn" class="btn btn-icon" title="Toggle Theme">💡</button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="app-main">
+      <!-- Tabs for main content -->
+      <div class="tabs-container">
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="scan">Scan</button>
+          <button class="tab-btn" data-tab="config">Configuration</button>
+          <button class="tab-btn" data-tab="wizard">Rule Wizard</button>
+        </div>
+        
+        <!-- Metadata bar (always visible) -->
+        <div class="metadata-bar">
+          <div class="entropy-calc">
+            <input type="text" id="entropyInput" placeholder="Calculate entropy..." />
+            <span id="entropyOutput">Entropy: 0.00</span>
+            <small class="entropy-warning">Do not paste real secrets!</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content -->
+      <div class="tab-content-container">
+        <!-- Scan Tab -->
+        <div class="tab-content active" id="scan-tab">
+          <div class="resizable-container">
+            <!-- Editor Section (Resizable) -->
+            <div class="editor-section">
+              <div class="editor-container">
+                <textarea id="inputText" placeholder="Paste your code here to scan for secrets..."></textarea>
+              </div>
+              
+              <div class="action-bar">
+                <select id="logLevelSelect" title="Log Level">
+                  <option value="Trace">Trace</option>
+                  <option value="Debug">Debug</option>
+                  <option value="Info" selected>Info</option>
+                  <option value="Warn">Warn</option>
+                  <option value="Error">Error</option>
+                </select>
+                <button id="scanBtn" class="btn btn-primary">Scan Content for Secrets</button>
+              </div>
+            </div>
+            
+            <!-- Resize Handle -->
+            <div class="resize-handle" id="resizeHandle"></div>
+            
+            <!-- Results Section -->
+            <div class="results-section">
+              <div id="results" class="results-container"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Config Tab -->
+        <div class="tab-content" id="config-tab">
+          <div class="editor-toolbar">
+            <span>Gitleaks Configuration (TOML)</span>
+            <button id="loadDefaultConfigBtn" class="btn btn-sm">Load Default Config</button>
+          </div>
+          <div class="editor-container">
+            <textarea id="configText"></textarea>
+          </div>
+        </div>
+
+        <!-- Rule Wizard Tab -->
+        <div class="tab-content" id="wizard-tab">
+          <div class="wizard-form">
+            <div class="form-group">
+              <label for="ruleType">Rule Type</label>
+              <select id="ruleType" name="ruleType" onchange="updateWizardFields()">
+                <option value="semi">Semi Generic</option>
+                <option value="unique">Unique</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="ruleId">ID</label>
+              <input type="text" id="ruleId" name="ruleId" oninput="updateGeneratedRule()" placeholder="Enter rule ID" />
+            </div>
+
+            <div class="form-group">
+              <label for="ruleDescription">Description</label>
+              <input type="text" id="ruleDescription" name="ruleDescription" oninput="updateGeneratedRule()" placeholder="Enter rule description" />
+            </div>
+
+            <!-- Fields for Semi Generic -->
+            <div id="semiFields">
+              <div class="form-group">
+                <label for="identifiers">Identifiers (comma separated)</label>
+                <input type="text" id="identifiers" name="identifiers" oninput="updateGeneratedRule()" placeholder="e.g. API_KEY, SECRET" />
+              </div>
+              
+              <div class="form-group">
+                <label for="entropySemi">Entropy</label>
+                <input type="number" id="entropySemi" name="entropySemi" oninput="updateGeneratedRule()" placeholder="Enter entropy threshold" />
+              </div>
+              
+              <div class="form-group">
+                <label for="keywordSemi">Keywords (comma separated)</label>
+                <input type="text" id="keywordSemi" name="keywordSemi" oninput="updateGeneratedRule()" placeholder="Enter keywords" />
+              </div>
+              
+              <div class="form-group">
+                <label for="captureType">Secret Capture Group Content</label>
+                <select id="captureType" name="captureType" onchange="updateCaptureTypeDisplay(); updateGeneratedRule();">
+                  <option value="manual">Manual</option>
+                  <option value="preset">Preset</option>
+                </select>
+              </div>
+              
+              <div id="captureManualDiv" class="form-group">
+                <label for="captureManual">Manual Regex</label>
+                <input type="text" id="captureManual" name="captureManual" oninput="updateGeneratedRule()" placeholder="e.g. .+" />
+              </div>
+              
+              <div id="capturePresetDiv" class="form-group" style="display:none;">
+                <label for="capturePreset">Preset</label>
+                <select id="capturePreset" name="capturePreset" onchange="updateCaptureTypeDisplay(); updateGeneratedRule()">
+                  <option value="Numeric">Numeric</option>
+                  <option value="Hex">Hex</option>
+                  <option value="AlphaNumeric">AlphaNumeric</option>
+                  <option value="AlphaNumericExtendedShort">AlphaNumericExtendedShort</option>
+                  <option value="AlphaNumericExtended">AlphaNumericExtended</option>
+                  <option value="AlphaNumericExtendedLong">AlphaNumericExtendedLong</option>
+                  <option value="Hex8_4_4_4_12">Hex8_4_4_4_12</option>
+                </select>
+                
+                <div id="presetRangeDiv" class="form-group">
+                  <label for="captureMin">Min</label>
+                  <input type="number" id="captureMin" name="captureMin" oninput="updateGeneratedRule()" placeholder="min" />
+                  <label for="captureMax">Max</label>
+                  <input type="number" id="captureMax" name="captureMax" oninput="updateGeneratedRule()" placeholder="max" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Fields for Unique -->
+            <div id="uniqueFields" style="display:none;">
+              <div class="form-group">
+                <label for="regexUnique">Regex</label>
+                <input type="text" id="regexUnique" name="regexUnique" oninput="updateGeneratedRule()" placeholder="Enter regex pattern" />
+              </div>
+              
+              <div class="form-group">
+                <label for="entropyUnique">Entropy</label>
+                <input type="number" id="entropyUnique" name="entropyUnique" oninput="updateGeneratedRule()" placeholder="Enter entropy threshold" />
+              </div>
+              
+              <div class="form-group">
+                <label for="keyword">Keywords (comma separated)</label>
+                <input type="text" id="keyword" name="keyword" oninput="updateGeneratedRule()" placeholder="Enter keywords" />
+              </div>
+            </div>
+
+            <div class="generated-rule-container form-group">
+              <label for="generatedRule">Generated Rule</label>
+              <div class="rule-output-container">
+                <textarea id="generatedRule" readonly></textarea>
+                <button id="copyRuleBtn" class="btn btn-sm copy-btn" onclick="copyGeneratedRule()">Copy</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>Powered by <a href="https://github.com/zricethezav/gitleaks/releases" target="_blank">Gitleaks v8.24.0</a></p>
+    </footer>
+  </div>
+
+  <!-- CodeMirror JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+  <!-- CodeMirror TOML Mode -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/toml/toml.min.js"></script>
+  <!-- CodeMirror JavaScript Mode (for syntax highlighting) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+
+
+  <!-- Go WASM Runtime -->
+  <script src="wasm_exec.js"></script>
+
+  <!-- Main JS -->
+  <script src="gitleaks.js"></script>
+
+  <!-- UI JS -->
+  <script src="ui.js"></script>
+
+</body>
+</html>
